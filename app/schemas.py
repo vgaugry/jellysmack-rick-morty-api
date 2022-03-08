@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 
 class Character(BaseModel):
@@ -9,7 +9,7 @@ class Character(BaseModel):
     type: str
     gender: str
     episode: List
-    comment: List
+    comment: Optional[List]
 
     class Config:
         orm_mode = True
@@ -21,7 +21,7 @@ class Episode(BaseModel):
     air_date: str
     episode: str
     character: List
-    comment: List
+    comment: Optional[List]
 
     class Config:
         orm_mode = True
