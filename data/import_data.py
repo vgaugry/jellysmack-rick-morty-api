@@ -41,6 +41,7 @@ def create_characters_data(db_connection, file_name):
     with open(os.path.join(__location__, file_name)) as characters_file:
         characters_dict = json.load(characters_file)
 
+    # parametrized query to prevent SQLi
     query = """INSERT INTO characters (id, name, status, species, type, gender) VALUES 
             (?, ?, ?, ?, ?, ?)"""
     cursor = db_connection.cursor()
@@ -54,6 +55,8 @@ def create_characters_data(db_connection, file_name):
 def create_episodes_data(db_connection, file_name):
     with open(os.path.join(__location__, file_name)) as episodes_file:
         episodes_dict = json.load(episodes_file)
+
+    # parametrized query to prevent SQLi
     query = """INSERT INTO episodes (id, name, air_date, episode) VALUES 
                     (?, ?, ?, ?)"""
     cursor = db_connection.cursor()
@@ -66,10 +69,13 @@ def create_episodes_data(db_connection, file_name):
 def create_assoc_data(db_connection, file_name):
     with open(os.path.join(__location__, file_name)) as characters_file:
         characters_dict = json.load(characters_file)
+
+    # create a dict for char_epi relation
     assoc_dict = {}
     for character in characters_dict:
         assoc_dict[character["id"]] = character["episode"]
 
+    # parametrized query to prevent SQLi
     query = "INSERT INTO assoc_characters_episodes (character_id, episode_id) VALUES (?, ?)"
     cursor = db_connection.cursor()
 
@@ -81,13 +87,16 @@ def create_assoc_data(db_connection, file_name):
 
 
 if __name__ == "__main__":
+    # script vars
     db_name = "rick-morty-api.db"
     character_file_name = "rick_morty-characters_v1.json"
     episodes_file_name = "rick_morty-episodes_v1.json"
 
+    # instantiate db connection with sqlite
     file_path = os.path.abspath(db_name)
     connection = sqlite3.connect(file_path)
 
+    # create tables and then load data
     create_tables(connection)
     create_characters_data(connection, character_file_name)
     create_episodes_data(connection, episodes_file_name)
