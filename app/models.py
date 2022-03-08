@@ -19,6 +19,7 @@ class Character(database.Base):
     type = Column(String, default=False)
     gender = Column(String, index=True, nullable=False)
     episode = relationship("Episode", secondary=assoc_characters_episodes, back_populates="character")
+    comments = relationship("Comment")
 
 
 class Episode(database.Base):
@@ -29,3 +30,13 @@ class Episode(database.Base):
     air_date = Column(String(256), index=True, nullable=False)
     episode = Column(String(256), nullable=False)
     character = relationship("Character", secondary=assoc_characters_episodes, back_populates="episode")
+    comments = relationship("Comment")
+
+
+class Comment(database.Base):
+    __tablename__ = "comments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    comment = Column(String(256), nullable=False)
+    character_id = Column(Integer, ForeignKey('characters.id'))
+    episode_id = Column(Integer, ForeignKey('episodes.id'))

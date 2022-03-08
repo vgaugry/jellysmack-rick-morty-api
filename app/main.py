@@ -53,3 +53,10 @@ def list_characters(db: Session = Depends(get_db)) -> list:
     return db_characters
 
 
+@app.post("/comments/", response_model=schemas.Comment)
+def create_comment(comment: schemas.CommentCreate, db: Session = Depends(get_db)):
+    if comment.episode_id is None and comment.character_id is None:
+        raise HTTPException(status_code=400, detail="Comment needs to be link to at least a character or an episode")
+    return crud.create_comment(db=db, comment=comment)
+
+
