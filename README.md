@@ -17,9 +17,9 @@ uvicorn main:app --reload
 when API server is running you can access it at : http://127.0.0.1:8000/docs
 
 ## Work description
->Took me 7 hours to develop that project.
+>**Took me 7 hours to develop that project.**
 > 
->Features completed = feature 1, feature 2, feature 3 and CSV export feature.
+>**Features completed = feature 1, feature 2, feature 3 and CSV export feature.**
 
 ### Git repository organisation
 The functionnal part is on the `main` branch.
