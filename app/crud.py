@@ -39,6 +39,17 @@ def create_comment(db: Session, comment: schemas.CommentCreate):
     return db_comment
 
 
+def update_comment(db: Session, comment_id: int, comment: schemas.CommentCreate):
+    db_comment = db.query(models.Comment).get(comment_id)
+    db_comment.comment = comment.comment
+    db_comment.character_id = comment.character_id
+    db_comment.episode_id = comment.episode_id
+
+    db.commit()
+    db.refresh(db_comment)
+    return db_comment
+
+
 def delete_comment(db: Session, comment_id: int):
     db.query(models.Comment).filter(models.Comment.id == comment_id).delete()
     db.commit()

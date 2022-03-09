@@ -94,7 +94,15 @@ def create_comment(comment: schemas.CommentCreate, db: Session = Depends(get_db)
     """
     if comment.episode_id is None and comment.character_id is None:
         raise HTTPException(status_code=400, detail="Comment needs to be link to at least a character or an episode")
-    return crud.create_comment(db=db, comment=comment)
+    return crud.create_comment(db, comment)
+
+
+@app.put("/comments/{comment_id}", response_model=schemas.Comment)
+def update_comment(comment_id: int, comment: schemas.CommentCreate, db: Session = Depends(get_db)):
+    """
+    Update a comment.
+    """
+    return crud.update_comment(db, comment_id, comment)
 
 
 @app.delete("/comments/{comment_id}")
@@ -104,5 +112,3 @@ def delete_comment(comment_id: int, db: Session = Depends(get_db)) -> dict:
     """
     crud.delete_comment(db, comment_id)
     return {"message": f"Comment {comment_id} deleted"}
-
-
