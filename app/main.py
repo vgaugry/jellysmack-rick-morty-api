@@ -1,6 +1,7 @@
 from typing import List
 
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi_pagination import Page, add_pagination, paginate
 
 import schemas
 import crud
@@ -40,13 +41,13 @@ def list_episodes(db: Session = Depends(get_db)) -> list:
     return db_episodes
 
 
-@app.get("/characters", response_model=List[schemas.Character])
-def list_characters(db: Session = Depends(get_db)) -> list:
+@app.get("/characters", response_model=Page[schemas.Character])
+def list_characters(db: Session = Depends(get_db)):
     """
     List all the characters.
     """
     db_characters = crud.get_characters(db)
-    return db_characters
+    return paginate(db_characters)
 
 
 @app.get("/comments/{comment_id}", response_model=schemas.Comment)
@@ -60,31 +61,31 @@ def get_comment(comment_id: int, db: Session = Depends(get_db)) -> dict:
     return db_comment
 
 
-@app.get("/comments", response_model=List[schemas.Comment])
-def list_comments(db: Session = Depends(get_db)) -> list:
+@app.get("/comments", response_model=Page[schemas.Comment])
+def list_comments(db: Session = Depends(get_db)):
     """
     List all the comments.
     """
     db_comments = crud.get_comments(db)
-    return db_comments
+    return paginate(db_comments)
 
 
-@app.get("/episodes/{episode_id}/comments", response_model=List[schemas.Comment])
-def list_episode_comments(episode_id: int, db: Session = Depends(get_db)) -> list:
+@app.get("/episodes/{episode_id}/comments", response_model=Page[schemas.Comment])
+def list_episode_comments(episode_id: int, db: Session = Depends(get_db)):
     """
     List all the comments for an episode.
     """
     db_comments = crud.get_episode_comments(db, episode_id)
-    return db_comments
+    return paginate(db_comments)
 
 
-@app.get("/characters/{character_id}/comments", response_model=List[schemas.Comment])
-def list_character_comments(character_id: int, db: Session = Depends(get_db)) -> list:
+@app.get("/characters/{character_id}/comments", response_model=Page[schemas.Comment])
+def list_character_comments(character_id: int, db: Session = Depends(get_db)):
     """
     List all the comments for a character.
     """
     db_comments = crud.get_character_comments(db, character_id)
-    return db_comments
+    return paginate(db_comments)
 
 
 @app.post("/comments", response_model=schemas.Comment)
@@ -112,3 +113,6 @@ def delete_comment(comment_id: int, db: Session = Depends(get_db)) -> dict:
     """
     crud.delete_comment(db, comment_id)
     return {"message": f"Comment {comment_id} deleted"}
+
+
+add_pagination(app)
