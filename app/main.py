@@ -30,7 +30,7 @@ app = FastAPI(
 @app.get("/")
 def root() -> dict:
     """
-    Root
+    API Root
     """
     return {"message": "Hello and welcome to the Rick & Morty API ! You can find the doc at /docs"}
 
@@ -51,7 +51,7 @@ def list_episodes(keyword: Optional[str] = None, db: Session = Depends(get_db)) 
 def list_characters(keyword: Optional[str] = None, species: Optional[str] = None, gender: Optional[str] = None,
                     db: Session = Depends(get_db)):
     """
-    List all the characters.
+    List all the characters with optional filters and keyword search.
     """
     if not any([keyword, gender, species]):
         db_characters = crud.get_characters(db)
@@ -63,7 +63,7 @@ def list_characters(keyword: Optional[str] = None, species: Optional[str] = None
 @app.get("/comments/{comment_id}", response_model=schemas.Comment)
 def get_comment(comment_id: int, db: Session = Depends(get_db)) -> dict:
     """
-    List all the comments.
+    Get a comment.
     """
     db_comment = crud.get_comment(db, comment_id)
     if db_comment is None:
@@ -74,7 +74,7 @@ def get_comment(comment_id: int, db: Session = Depends(get_db)) -> dict:
 @app.get("/comments", response_model=Page[schemas.Comment])
 def list_comments(keyword: Optional[str] = None, db: Session = Depends(get_db)):
     """
-    List all the comments.
+    List all the comments with keyword search.
     """
     if not keyword:
         db_comments = crud.get_comments(db)
