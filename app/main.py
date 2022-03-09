@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi_pagination import Page, add_pagination, paginate
@@ -33,20 +33,26 @@ def root() -> dict:
 
 
 @app.get("/episodes", response_model=List[schemas.Episode])
-def list_episodes(db: Session = Depends(get_db)) -> list:
+def list_episodes(keyword: Optional[str] = None, db: Session = Depends(get_db)) -> list:
     """
     List all the episodes.
     """
-    db_episodes = crud.get_episodes(db)
+    if keyword is None:
+        db_episodes = crud.get_episodes(db)
+    else:
+        db_episodes = crud.search_episodes(db, keyword)
     return db_episodes
 
 
 @app.get("/characters", response_model=Page[schemas.Character])
-def list_characters(db: Session = Depends(get_db)):
+def list_characters(keyword: Optional[str] = None, db: Session = Depends(get_db)):
     """
     List all the characters.
     """
-    db_characters = crud.get_characters(db)
+    if keyword is None:
+        db_characters = crud.get_characters(db)
+    else:
+        db_characters = crud.search_characters(db, keyword)
     return paginate(db_characters)
 
 
@@ -62,11 +68,14 @@ def get_comment(comment_id: int, db: Session = Depends(get_db)) -> dict:
 
 
 @app.get("/comments", response_model=Page[schemas.Comment])
-def list_comments(db: Session = Depends(get_db)):
+def list_comments(keyword: Optional[str] = None, db: Session = Depends(get_db)):
     """
     List all the comments.
     """
-    db_comments = crud.get_comments(db)
+    if not keyword:
+        db_comments = crud.get_comments(db)
+    else:
+        db_comments = crud.search_comments(db, keyword)
     return paginate(db_comments)
 
 
