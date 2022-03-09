@@ -24,6 +24,8 @@ when API server is running you can access it at : http://127.0.0.1:8000/docs
 ### Git repository organisation
 The functionnal part is on the `main` branch.
 
+The branch used to develop is the branch `dev`.
+
 You can find all features in order of development on `feature1`, `feature2`, `feature3` and `featureCSV` branches.
 
 You can also find a unit test initiation on the branch `tests` but it needs refactoring to work properly.
