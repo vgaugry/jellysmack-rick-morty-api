@@ -4,7 +4,6 @@ import models
 import schemas
 
 
-# FEATURE 1
 def get_episodes(db: Session):
     return db.query(models.Episode).all()
 
@@ -13,7 +12,6 @@ def get_characters(db: Session):
     return db.query(models.Character).all()
 
 
-# FEATURE 2
 def get_comment(db: Session, comment_id: int):
     return db.query(models.Comment).get(comment_id)
 
@@ -55,7 +53,6 @@ def delete_comment(db: Session, comment_id: int):
     db.commit()
 
 
-# FEATURE 3
 def search_comments(db: Session, keyword: str):
     return db.query(models.Comment).filter(models.Comment.comment.like(f"%{keyword}%")).all()
 

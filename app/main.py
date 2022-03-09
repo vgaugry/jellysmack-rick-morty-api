@@ -1,5 +1,8 @@
 from typing import List, Optional
+import io
+import pandas as pd
 
+from fastapi.responses import StreamingResponse
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi_pagination import Page, add_pagination, paginate
 
@@ -78,6 +81,27 @@ def list_comments(keyword: Optional[str] = None, db: Session = Depends(get_db)):
     else:
         db_comments = crud.search_comments(db, keyword)
     return paginate(db_comments)
+
+
+@app.get("/export/comments")
+def export_comments(db: Session = Depends(get_db)):
+    """
+    Export all the comments.
+    """
+    db_comments = crud.get_comments(db)
+
+    # Use of pandas to convert List of models into Dataframe and then stream it into a CSV
+    comments_df = pd.DataFrame([comment.__dict__ for comment in db_comments])
+    del comments_df["_sa_instance_state"]
+
+    stream = io.StringIO()
+    comments_df.to_csv(stream, index=False)
+
+    response = StreamingResponse(iter([stream.getvalue()]), media_type="text/csv")
+
+    response.headers["Content-Disposition"] = "attachment; filename=export_comment.csv"
+
+    return response
 
 
 @app.get("/episodes/{episode_id}/comments", response_model=Page[schemas.Comment])
