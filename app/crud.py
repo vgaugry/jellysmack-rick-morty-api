@@ -64,5 +64,13 @@ def search_episodes(db: Session, keyword: str):
     return db.query(models.Episode).filter(models.Episode.name.like(f"%{keyword}%")).all()
 
 
-def search_characters(db: Session, keyword: str):
-    return db.query(models.Character).filter(models.Character.name.like(f"%{keyword}%")).all()
+def filter_characters(db: Session, keyword: str, gender: str, species: str):
+    queryset = db.query(models.Character)
+    if keyword:
+        queryset = queryset.filter(models.Character.name.like(f"%{keyword}%"))
+    if gender:
+        queryset = queryset.filter(models.Character.gender == gender)
+    if species:
+        queryset = queryset.filter(models.Character.species == species)
+
+    return queryset.all()

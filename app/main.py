@@ -45,14 +45,15 @@ def list_episodes(keyword: Optional[str] = None, db: Session = Depends(get_db)) 
 
 
 @app.get("/characters", response_model=Page[schemas.Character])
-def list_characters(keyword: Optional[str] = None, db: Session = Depends(get_db)):
+def list_characters(keyword: Optional[str] = None, species: Optional[str] = None, gender: Optional[str] = None,
+                    db: Session = Depends(get_db)):
     """
     List all the characters.
     """
-    if keyword is None:
+    if not any([keyword, gender, species]):
         db_characters = crud.get_characters(db)
     else:
-        db_characters = crud.search_characters(db, keyword)
+        db_characters = crud.filter_characters(db, keyword, gender, species)
     return paginate(db_characters)
 
 
